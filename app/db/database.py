@@ -4,8 +4,7 @@ from sqlalchemy.orm import sessionmaker, DeclarativeBase, declared_attr, Mapped,
 
 from app.db.config import *
 
-# SQLALCHEMY_DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASS}@0.0.0.0:5432/{DB_NAME}"
-SQLALCHEMY_DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+SQLALCHEMY_DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{DB_HOST}:{DB_PORT}/{POSTGRES_DB}"
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
