@@ -5,3 +5,5 @@ asyncpg
 alembic
 psycopg2==2.9.7
 gunicorn
+jinja2==3.1.2
+python-multipart

@@ -1,16 +1,27 @@
 version: "3.8"
 
+networks:
+  fa_blog_network:
+    driver: bridge
+
+
 services:
   db:
     image: postgres:14
     container_name: db_app
     env_file:
       - .env
+    networks:
+      - fa_blog_network
   app:
     build: .
     container_name: fastapi_blog
     command: ["/app/docker/app.sh"]
     ports:
       - 9999:8000
+#    volumes:
+#      - ..:/app
     depends_on:
       - db
+    networks:
+      - fa_blog_network
