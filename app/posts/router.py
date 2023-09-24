@@ -19,6 +19,9 @@ templates = Jinja2Templates(directory='app/templates') #указываем пу�
 router = APIRouter(tags=["posts"])
 
 
+
+
+
 @router.get('/posts/{id}', response_class=HTMLResponse)
 def post_read_view(request: Request,
                    id: int = Path(title='The ID of the post to get'),
@@ -77,4 +80,14 @@ def post_edit_post_view(request: Request,
     post.title = data['title']
     post.body = data['body']
     db.commit()
-    return RedirectResponse(url='/posts/')
+    return RedirectResponse(url='/posts/', status_code=302)
+
+
+@router.post('/posts/{id}/delete', response_class=HTMLResponse)
+def post_delete_view(request: Request,
+                     db: Session = Depends(get_db),
+                     id: int = Path(title='The ID of the post to edit')):
+    post = get_object_or_404(request, id, Post, db)
+    db.delete(post)
+    db.commit()
+    return RedirectResponse(url='/', status_code=302)
