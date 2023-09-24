@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2> Post title:  {{ post.title }} </h2>
+<h3> {{ post.body }} </h3>
+
+<a href="/posts/{{post.id}}/edit"> Edit </a>
+
+{% endblock %}

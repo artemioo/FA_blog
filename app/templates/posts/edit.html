@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form action="/posts/{{object.id}}/edit/" method="post">
+<h2> Post title:  {{ object.title }} </h2>
+
+<div>
+            <label for='title'>Title</label>
+            <input class='form-control' type='text' name='title' id='title'
+            required='required'
+            placeholder='Your Post Title' value="{% if object.title %}{{ object.title }}{% endif %}" />
+</div>
+
+<div>
+            <label for='title'>Content </label>
+            <input class='form-control' type='text' name='body' id='body'
+            required='required'
+            placeholder='Your Post Content' value="{% if object.body %}{{ object.body }}{% endif %}" />
+</div>
+
+    <button type="submit"> Edit </button>
+</form>
+{% endblock %}
