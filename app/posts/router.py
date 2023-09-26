@@ -16,26 +16,17 @@ from app.db.db_session import get_db
 from app.shortcuts import get_object_or_404
 
 templates = Jinja2Templates(directory='app/templates') #указываем путь к папке
-router = APIRouter(tags=["posts"])
+router = APIRouter(
+    prefix='/posts',
+    tags=["posts"])
 
 
-
-
-
-@router.get('/posts/{id}', response_class=HTMLResponse)
-def post_read_view(request: Request,
-                   id: int = Path(title='The ID of the post to get'),
-                   db: Session = Depends(get_db)):
-    post = get_object_or_404(request, id, Post, db)
-    return templates.TemplateResponse('/posts/detail.html', {'request': request, 'post': post})
-
-
-@router.get('/posts', response_class=HTMLResponse)
+@router.get('/create', response_class=HTMLResponse)
 def post_create_get_view(request: Request):
     return templates.TemplateResponse('/posts/create.html', {'request': request})
 
 
-@router.post('/posts', response_class=HTMLResponse)
+@router.post('/create', response_class=HTMLResponse)
 def post_create_post_view(request: Request, db = Depends(get_db),
                 title: str = Form(...),
                 body: str = Form(...)):
@@ -56,7 +47,15 @@ def post_create_post_view(request: Request, db = Depends(get_db),
     return RedirectResponse(url='/', status_code=302)
 
 
-@router.get('/posts/{id}/edit', response_class=HTMLResponse)
+@router.get('/{id}', response_class=HTMLResponse)
+def post_read_view(request: Request,
+                   id: int = Path(title='The ID of the post to get'),
+                   db: Session = Depends(get_db)):
+    post = get_object_or_404(request, id, Post, db)
+    return templates.TemplateResponse('/posts/detail.html', {'request': request, 'post': post})
+
+
+@router.get('{id}/edit', response_class=HTMLResponse)
 def post_edit_get_view(request: Request,
                          db: Session = Depends(get_db),
                          id: int = Path(title='The ID of the post to edit')):
@@ -64,7 +63,7 @@ def post_edit_get_view(request: Request,
     return templates.TemplateResponse('/posts/edit.html', {'request': request, 'object': post})
 
 
-@router.post('/posts/{id}/edit', response_class=HTMLResponse)
+@router.post('/{id}/edit', response_class=HTMLResponse)
 def post_edit_post_view(request: Request,
                      db: Session = Depends(get_db),
                      id: int = Path(title='The ID of the post to edit'),
@@ -83,7 +82,7 @@ def post_edit_post_view(request: Request,
     return RedirectResponse(url='/posts/', status_code=302)
 
 
-@router.post('/posts/{id}/delete', response_class=HTMLResponse)
+@router.post('/{id}/delete', response_class=HTMLResponse)
 def post_delete_view(request: Request,
                      db: Session = Depends(get_db),
                      id: int = Path(title='The ID of the post to edit')):
