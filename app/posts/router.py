@@ -21,6 +21,12 @@ router = APIRouter(
     tags=["posts"])
 
 
+@router.get('/', response_class=HTMLResponse)
+def home(request: Request, db: Session = Depends(get_db)):
+    posts = db.query(Post).all()
+    return templates.TemplateResponse('/base.html', {'request': request, "posts": posts})
+
+
 @router.get('/create', response_class=HTMLResponse)
 def post_create_get_view(request: Request):
     return templates.TemplateResponse('/posts/create.html', {'request': request})
@@ -44,7 +50,7 @@ def post_create_post_view(request: Request, db = Depends(get_db),
     post = Post(title=data['title'], body=data['body'])
     db.add(post)
     db.commit()
-    return RedirectResponse(url='/', status_code=302)
+    return RedirectResponse(url='/posts', status_code=302)
 
 
 @router.get('/{id}', response_class=HTMLResponse)
@@ -79,7 +85,7 @@ def post_edit_post_view(request: Request,
     post.title = data['title']
     post.body = data['body']
     db.commit()
-    return RedirectResponse(url='/posts/', status_code=302)
+    return RedirectResponse(url='/', status_code=302)
 
 
 @router.post('/{id}/delete', response_class=HTMLResponse)

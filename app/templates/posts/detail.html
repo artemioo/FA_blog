@@ -4,6 +4,8 @@
 <h2> Post title:  {{ post.title }} </h2>
 <h3> {{ post.body }} </h3>
 
+<h5> {{ post.time_created.strftime('%Y-%m-%d') }} </h5>
+
 <a href="/posts/{{post.id}}/edit"> Edit </a> <br>
 
 <form action="/posts/{{post.id}}/delete" method="post">
