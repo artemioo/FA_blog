@@ -12,8 +12,9 @@ from starlette.templating import Jinja2Templates
 
 
 from app.utils import valid_schema_data_or_error
+from . import auth
 from .models import User
-from .schemas import UserSignUpSchema
+from .schemas import UserSignUpSchema, UserLoginSchema
 
 from app.db.db_session import get_db
 from app.shortcuts import get_object_or_404
@@ -51,7 +52,28 @@ def create_user_post_view(request: Request,
         'password_confirm': password_confirm
     }
     data, errors = valid_schema_data_or_error(raw_data, UserSignUpSchema)
-    User.create_user(data['email'], data['password'], data['username'], db=db,)
+    User.create_user(data['email'], data['password'], data['username'],
+                     data['first_name'], data['last_name'], data['bio'], db=db,)
     if len(errors) > 0:
-        pass
-    return RedirectResponse(url='/posts')
+        return templates.TemplateResponse("auth/signup.html", {'request': request})
+    return RedirectResponse(url='/posts', status_code=302)
+
+
+@router.get('/login', response_class=HTMLResponse)
+def login_get_view(request: Request):
+    return templates.TemplateResponse('users/login.html', {'request': request})
+
+@router.post('/login', response_class=HTMLResponse)
+def login_post_view(request: Request, username: str = Form(), password: str = Form(), db: Session = Depends(get_db)):
+    raw_data = {
+        "username": username,
+        "password": password
+    }
+    data, errors = valid_schema_data_or_error(raw_data, UserLoginSchema)
+    user_obj = auth.authenticate(username, password, db)
+    token = auth.login(user_obj)
+
+    response = RedirectResponse(url='/posts', status_code=302)
+    response.set_cookie(key='token', value=token)
+    # respone.delete_cookie()
+    return response
