@@ -14,6 +14,8 @@ from .schemas import PostCreateSchema, PostEditSchema
 from .models import Post
 from app.db.db_session import get_db
 from app.shortcuts import get_object_or_404
+from ..users.auth import verify_user_id
+from ..users.utils import get_user_info
 
 templates = Jinja2Templates(directory='app/templates') #указываем путь к папке
 router = APIRouter(
@@ -21,10 +23,20 @@ router = APIRouter(
     tags=["posts"])
 
 
+
+
 @router.get('/', response_class=HTMLResponse)
 def home(request: Request, db: Session = Depends(get_db)):
     posts = db.query(Post).all()
-    return templates.TemplateResponse('/base.html', {'request': request, "posts": posts})
+    user = None
+    if request.cookies['token']:
+        user = get_user_info(request=request, token=request.cookies['token'], db=db)
+
+    context = {'request': request,
+               "posts": posts,
+               'user': user
+    }
+    return templates.TemplateResponse('/base.html', context)
 
 
 @router.get('/create', response_class=HTMLResponse)
