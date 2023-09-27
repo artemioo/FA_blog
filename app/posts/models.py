@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, Integer, String, Text
+from sqlalchemy import Column, DateTime, Integer, String, Text, ForeignKey
 
 from sqlalchemy.sql import func
 from app.db.base_class import Base
@@ -11,6 +11,7 @@ class Post(Base):
     body = Column(Text)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
     time_updated = Column(DateTime(timezone=True), onupdate=func.now())
+    # author_id = Column(Integer, ForeignKey('user.user_id'))
     # tags
-    # author_id = Column(Integer, ForeignKey('author.id'))
+
 
